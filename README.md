@@ -4,13 +4,13 @@
 
 ## Basic Details
 
-**Team Name:** [INSERT HERE]
+**Team Name:** TOM & jerry
 
 **Team Members:**  
-[Member 1 – College]  
-[Member 2 – College]
+Rinsha TKC – MAMO College 
 
-**Hosted Project Link:** [INSERT HERE]
+
+**Hosted Project Link:** https://rinshatkc1716.github.io/LOST_FOUND_PROJECT/
 
 ---
 
@@ -106,7 +106,7 @@ UniSolve brings all these needs into a single structured web platform with dedic
 
 ---
 
-# Implementation
+# video link : 
 
 ## Installation
 
