@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UniSolve - Live Campus</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">🧠 UniSolve</div>
+    <div>
+        <a href="index.html"><button>Home</button></a>
+        <button onclick="toggleDarkMode()">🌙</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<div class="container">
+    <h1>🔴 Live Campus Programs</h1>
+    <p style="color: gray;">See what’s happening right now in campus.</p>
+
+    <input type="text" id="club" placeholder="Club Name">
+    <input type="text" id="program" placeholder="Program Name">
+    <input type="text" id="venue" placeholder="Venue">
+
+    <label>Start Time:</label>
+    <input type="datetime-local" id="startTime">
+
+    <label>End Time:</label>
+    <input type="datetime-local" id="endTime">
+
+    <button class="submit-btn" onclick="addProgram()">Add Program</button>
+
+    <h3 style="margin-top:30px;">Current Programs</h3>
+    <div id="programList"></div>
+</div>
+
+<script>
+
+
+// Protect page
+if (localStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "login.html";
+}
+
+// Load programs
+window.onload = function () {
+    loadPrograms();
+
+    if (localStorage.getItem("darkMode") === "enabled") {
+        document.body.classList.add("dark");
+    }
+};
+
+function addProgram() {
+    let club = document.getElementById("club").value;
+    let program = document.getElementById("program").value;
+    let venue = document.getElementById("venue").value;
+    let startTime = document.getElementById("startTime").value;
+    let endTime = document.getElementById("endTime").value;
+
+    if (!club || !program || !venue || !startTime || !endTime) {
+        alert("Fill all fields!");
+        return;
+    }
+
+    let programData = { club, program, venue, startTime, endTime };
+
+    let programs = JSON.parse(localStorage.getItem("livePrograms")) || [];
+    programs.push(programData);
+    localStorage.setItem("livePrograms", JSON.stringify(programs));
+
+    loadPrograms();
+}
+
+function loadPrograms() {
+    let list = document.getElementById("programList");
+    list.innerHTML = "";
+
+    let programs = JSON.parse(localStorage.getItem("livePrograms")) || [];
+
+    programs.forEach((item) => {
+
+        let now = new Date();
+        let start = new Date(item.startTime);
+        let end = new Date(item.endTime);
+
+        let status = "";
+        let color = "";
+
+        if (now >= start && now <= end) {
+            status = "LIVE NOW";
+            color = "green";
+        } else if (now < start) {
+            status = "Starting Soon";
+            color = "orange";
+        } else {
+            status = "Ended";
+            color = "red";
+        }
+
+        let div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+            <strong>${item.program}</strong><br>
+            Club: ${item.club}<br>
+            Venue: ${item.venue}<br>
+            <span style="color:${color}; font-weight:bold;">${status}</span>
+        `;
+
+        list.appendChild(div);
+    });
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("darkMode", "enabled");
+    } else {
+        localStorage.setItem("darkMode", "disabled");
+    }
+}
+
+function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>

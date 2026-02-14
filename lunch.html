@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UniSolve - LunchLink</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">
+        🧠 UniSolve
+    </div>
+
+   <div>
+    <a href="index.html">
+        <button>Home</button>
+    </a>
+    <button onclick="toggleDarkMode()">🌙</button>
+    <button onclick="logout()">Logout</button>
+</div> 
+</div>
+
+<div class="container">
+    <h1>🍱 LunchLink</h1>
+    <p style="color: gray; font-size:14px;">
+        Connect with students for lunch exchange.
+    </p>
+
+    <input type="text" id="name" placeholder="Your Name">
+
+    <select id="type">
+        <option value="Need">Need Lunch</option>
+        <option value="Offer">Can Bring Lunch</option>
+    </select>
+
+    <input type="text" id="location" placeholder="Pickup Location (e.g., Main Gate)">
+    <input type="text" id="contact" placeholder="Contact Number">
+
+    <button class="submit-btn" onclick="addLunch()">Post</button>
+
+    <h3 style="margin-top:30px;">Lunch Requests</h3>
+    <div id="lunchList"></div>
+</div>
+
+<script>
+
+// 🔐 Protect Page
+if (localStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "login.html";
+}
+
+function addLunch() {
+    let name = document.getElementById("name").value;
+    let type = document.getElementById("type").value;
+    let location = document.getElementById("location").value;
+    let contact = document.getElementById("contact").value;
+
+    if (name === "" || location === "" || contact === "") {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    let lunchData = { name, type, location, contact };
+
+    let savedLunch = JSON.parse(localStorage.getItem("lunchPosts")) || [];
+    savedLunch.push(lunchData);
+    localStorage.setItem("lunchPosts", JSON.stringify(savedLunch));
+
+    loadLunch();
+
+    document.getElementById("name").value = "";
+    document.getElementById("location").value = "";
+    document.getElementById("contact").value = "";
+}
+
+function loadLunch() {
+    document.getElementById("lunchList").innerHTML = "";
+
+    let savedLunch = JSON.parse(localStorage.getItem("lunchPosts")) || [];
+
+    savedLunch.forEach((item, index) => {
+        let newCard = document.createElement("div");
+        newCard.className = "item";
+
+        if (item.type === "Offer") {
+            newCard.style.borderLeft = "5px solid #22c55e";
+        } else {
+            newCard.style.borderLeft = "5px solid #f97316";
+        }
+
+        newCard.innerHTML =
+            "<strong>" + item.type + ":</strong><br>" +
+            "Name: " + item.name + "<br>" +
+            "Location: " + item.location + "<br>" +
+            "Contact: " + item.contact +
+            "<br><br>" +
+            "<button onclick='deleteLunch(" + index + ")'>Delete</button>";
+
+        document.getElementById("lunchList").appendChild(newCard);
+    });
+}
+
+function deleteLunch(index) {
+    let savedLunch = JSON.parse(localStorage.getItem("lunchPosts")) || [];
+    savedLunch.splice(index, 1);
+    localStorage.setItem("lunchPosts", JSON.stringify(savedLunch));
+    loadLunch();
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("darkMode", "enabled");
+    } else {
+        localStorage.setItem("darkMode", "disabled");
+    }
+}
+
+function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "login.html";
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    loadLunch();
+
+    if (localStorage.getItem("darkMode") === "enabled") {
+        document.body.classList.add("dark");
+    }
+});
+
+</script>
+
+</body>
+</html>

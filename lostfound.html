@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UniSolve - Lost & Found</title>
+    <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>  
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>UniSolve</h2>
+    <a href="index.html"><button>Home</button></a>
+    <button id="darkToggle" onclick="toggleDarkMode()">🌙</button>
+    <button onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+    <h1>🔍 Lost & Found</h1>
+
+    <input type="text" id="name" placeholder="Your Name">
+    <input type="text" id="itemName" placeholder="Item Name">
+    <input type="text" id="contact" placeholder="Contact Number">
+
+    <select id="type">
+        <option value="Lost">Lost</option>
+        <option value="Found">Found</option>
+    </select>
+
+    <button class="submit-btn" onclick="addItem()">Submit</button>
+<input type="text" id="searchInput"
+       placeholder="Search by item name..."
+       onkeyup="searchItems()">
+
+<p id="totalCount"
+   style="margin-top:10px; font-weight:500;"></p>
+    <h3 style="margin-top:30px;">Reported Items</h3>
+    <div id="itemsList"></div>
+</div>
+
+<script>
+ const { Client, Databases, ID } = Appwrite;
+
+const client = new Client()
+    .setEndpoint("https://fra.cloud.appwrite.io/v1")
+    .setProject("698fcdb00018ff671c6f");
+
+const databases = new Databases(client);
+
+const DATABASE_ID = "698fcde800197ea0f98d";   // your database ID
+const COLLECTION_ID = "lostfound";           // your table name  
+   // Check login
+if (localStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "login.html";
+} 
+
+// Load items when page opens
+window.onload = function() {
+    loadItems();
+    // Check for dark mode preference
+    if (localStorage.getItem("darkMode") === "enabled") {
+        document.body.classList.add("dark");
+    }
+};
+
+function loadItems() {
+    document.getElementById("itemsList").innerHTML = "";
+
+    let savedItems = JSON.parse(localStorage.getItem("lostFoundItems")) || [];
+    savedItems.forEach((item, index) => displayItem(item, index));
+}
+
+function addItem() {
+    let name = document.getElementById("name").value;
+    let itemName = document.getElementById("itemName").value;
+    let contact = document.getElementById("contact").value;
+    let type = document.getElementById("type").value;
+
+    if (name === "" || itemName === "" || contact === "") {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    let itemData = {
+        name: name,
+        itemName: itemName,
+        contact: contact,
+        type: type
+    };
+
+    let savedItems = JSON.parse(localStorage.getItem("lostFoundItems")) || [];
+    savedItems.push(itemData);
+    localStorage.setItem("lostFoundItems", JSON.stringify(savedItems));
+
+    loadItems();
+
+    document.getElementById("name").value = "";
+    document.getElementById("itemName").value = "";
+    document.getElementById("contact").value = "";
+}
+function searchItems() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let items = document.getElementsByClassName("item");
+
+    for (let i = 0; i < items.length; i++) {
+        let text = items[i].innerText.toLowerCase();
+
+        if (text.includes(input)) {
+            items[i].style.display = "block";
+        } else {
+            items[i].style.display = "none";
+        }
+    }
+}
+
+function displayItem(item, index) {
+    let newItem = document.createElement("div");
+    newItem.className = "item";
+
+    if (item.type === "Lost") {
+        newItem.classList.add("lost");
+    } else {
+        newItem.classList.add("found");
+    }
+
+    newItem.innerHTML =
+        "<strong>" + item.type + ":</strong> " + item.itemName + "<br>" +
+        "<strong>Name:</strong> " + item.name + "<br>" +
+        "<strong>Contact:</strong> " + item.contact +
+        "<br><br>" +
+        "<button onclick='deleteItem(" + index + ")'>Delete</button>";
+
+    document.getElementById("itemsList").appendChild(newItem);
+}
+
+function deleteItem(index) {
+    let savedItems = JSON.parse(localStorage.getItem("lostFoundItems")) || [];
+    savedItems.splice(index, 1);
+    localStorage.setItem("lostFoundItems", JSON.stringify(savedItems));
+    loadItems();
+}
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+
+    // Save preference
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("darkMode", "enabled");
+    } else {
+        localStorage.setItem("darkMode", "disabled");
+    }
+}
+function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>

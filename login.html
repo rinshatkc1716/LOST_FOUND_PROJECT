@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UniSolve - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Login to UniSolve</h1>
+
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+
+    <button class="submit-btn" onclick="login()">Login</button>
+
+    <p style="margin-top:15px;">
+        Don't have an account?
+        <a href="register.html">Register</a>
+    </p>
+</div>
+
+<script>
+function login() {
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+
+    let savedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (!savedUser) {
+        alert("No account found. Please register first.");
+        return;
+    }
+
+    if (username === savedUser.username && password === savedUser.password) {
+        localStorage.setItem("loggedIn", "true");
+        window.location.href = "index.html";
+    } else {
+        alert("Invalid username or password");
+    }
+}
+</script>
+
+</body>
+</html>

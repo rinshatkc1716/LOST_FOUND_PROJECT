@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UniSolve - Study Help</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f3ff, #e0f2fe);
+            margin: 0;
+        }
+
+        .navbar {
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            margin: 0;
+            color: #7c3aed;
+        }
+
+        .navbar button {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .container {
+            width: 500px;
+            margin: 60px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        textarea {
+            resize: none;
+            height: 80px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #7c3aed;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .help-card {
+            background: #f9fafb;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 12px;
+            text-align: left;
+            border-left: 5px solid #3b82f6;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>UniSolve</h2>
+    <button onclick="toggleDarkMode()">🌙</button>
+    <button onclick="logout()">Logout</button>
+    <a href="index.html">
+        <button>Home</button>
+    </a>
+</div>
+
+<div class="container">
+    <h1>📚 Study Help</h1>
+
+    <input type="text" id="name" placeholder="Your Name">
+    <input type="text" id="subject" placeholder="Subject / Topic">
+    <textarea id="description" placeholder="Describe what help you need"></textarea>
+    <input type="text" id="contact" placeholder="Contact Number">
+
+    <button class="submit-btn" onclick="addHelp()">Post Request</button>
+
+    <h3 style="margin-top:30px;">Help Requests</h3>
+    <div id="helpList"></div>
+</div>
+
+<script>
+function addHelp() {
+    let name = document.getElementById("name").value;
+    let subject = document.getElementById("subject").value;
+    let description = document.getElementById("description").value;
+    let contact = document.getElementById("contact").value;
+
+    if (name === "" || subject === "" || description === "" || contact === "") {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    let newCard = document.createElement("div");
+    newCard.className = "help-card";
+
+    newCard.innerHTML =
+        "<strong>Subject:</strong> " + subject + "<br>" +
+        "<strong>Name:</strong> " + name + "<br>" +
+        "<strong>Need Help With:</strong> " + description + "<br>" +
+        "<strong>Contact:</strong> " + contact;
+
+    document.getElementById("helpList").appendChild(newCard);
+
+    document.getElementById("name").value = "";
+    document.getElementById("subject").value = "";
+    document.getElementById("description").value = "";
+    document.getElementById("contact").value = "";
+}
+</script>
+<script>
+    // Check login
+if (localStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "login.html";
+}
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("darkMode", "enabled");
+    } else {
+        localStorage.setItem("darkMode", "disabled");
+    }
+}
+
+// Apply saved mode on load
+window.onload = function() {
+    if (localStorage.getItem("darkMode") === "enabled") {
+        document.body.classList.add("dark");
+    }
+}
+function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "login.html";
+}
+</script>
+</body>
+</html>

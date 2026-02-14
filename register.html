@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UniSolve - Register</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Create Account</h1>
+
+    <input type="text" id="newUsername" placeholder="Username">
+    <input type="password" id="newPassword" placeholder="Password">
+
+    <button class="submit-btn" onclick="register()">Register</button>
+
+    <p style="margin-top:15px;">
+        Already have an account?
+        <a href="login.html">Login</a>
+    </p>
+</div>
+
+<script>
+function register() {
+    let username = document.getElementById("newUsername").value;
+    let password = document.getElementById("newPassword").value;
+
+    if (username === "" || password === "") {
+        alert("Please fill all fields");
+        return;
+    }
+
+    let user = {
+        username: username,
+        password: password
+    };
+
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Account created successfully!");
+    window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>
